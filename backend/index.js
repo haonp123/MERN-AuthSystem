@@ -16,8 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://mern-auth-system-frontend.vercel.app"],
-    methods: ["POST", "GET"],
+    origin: "https://mern-auth-system-frontend.vercel.app",
     credentials: true,
   })
 );
