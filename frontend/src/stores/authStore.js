@@ -4,7 +4,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL: "https://mern-auth-system-api.vercel.app/api/auth",
   headers: {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "https://mern-auth-system-api.vercel.app",
     "Access-Control-Allow-Credentials": true,
   },
 });
