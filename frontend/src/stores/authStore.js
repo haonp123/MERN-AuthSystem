@@ -1,9 +1,13 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "https://mern-auth-system-api.vercel.app/api/auth";
-
-axios.defaults.withCredentials = true;
+const axiosInstance = axios.create({
+  baseURL: "https://mern-auth-system-api.vercel.app/api/auth",
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+  },
+});
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -16,7 +20,7 @@ export const useAuthStore = create((set) => ({
   signup: async (email, password, name) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/signup`, { email, password, name });
+      const response = await axiosInstance.post(`/signup`, { email, password, name });
       set({ user: response.data.user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ error: error.response.data.message || "Error signing up", isLoading: false });
@@ -26,7 +30,7 @@ export const useAuthStore = create((set) => ({
   verifyEmail: async (code) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/verify-email`, { code });
+      const response = await axiosInstance.post(`/verify-email`, { code });
       set({ user: response.data.user, isAuthenticated: true, isLoading: false });
       return response.data;
     } catch (error) {
@@ -37,7 +41,7 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      const response = await axios.get(`${API_URL}/check-auth`);
+      const response = await axiosInstance.get(`/check-auth`);
       set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
     } catch (error) {
       set({ error: null, isCheckingAuth: false, isAuthenticated: false });
@@ -46,7 +50,7 @@ export const useAuthStore = create((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
+      const response = await axiosInstance.post(`/login`, { email, password });
       set({
         isAuthenticated: true,
         user: response.data.user,
@@ -61,7 +65,7 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     set({ isLoading: true, error: null });
     try {
-      await axios.post(`${API_URL}/logout`);
+      await axiosInstance.post(`/logout`);
       set({ user: null, isAuthenticated: false, error: null, isLoading: false });
     } catch (error) {
       set({ error: "Error logging out", isLoading: false });
@@ -71,7 +75,7 @@ export const useAuthStore = create((set) => ({
   forgotPassword: async (email) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/forgot-password`, { email });
+      const response = await axiosInstance.post(`/forgot-password`, { email });
       set({ message: response.data.message, isLoading: false });
     } catch (error) {
       set({
@@ -84,7 +88,7 @@ export const useAuthStore = create((set) => ({
   resetPassword: async (token, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/reset-password/${token}`, { password });
+      const response = await axiosInstance.post(`/reset-password/${token}`, { password });
       set({ message: response.data.message, isLoading: false });
     } catch (error) {
       set({
